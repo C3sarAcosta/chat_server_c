@@ -20,4 +20,15 @@ const UsuarioSchema = Schema({
     }
 });
 
+//Sobreescribimos  el metodo toJSON
+UsuarioSchema.method('toJSON', function () {
+    /*
+    Extraer __v, _id, password
+    ...Variable (Operador rest)
+    */
+    const { __v, _id, password, ...object } = this.toObject();
+    object.uid = _id;
+    return object;
+})
+
 module.exports = model('Usuario', UsuarioSchema);
