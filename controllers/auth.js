@@ -1,9 +1,10 @@
 const { response } = require("express");
 const { validationResult } = require("express-validator");
 const Usuario = require("../models/usuario");
+const bcrypt = require("bcryptjs");
 
 const crearUsuario = async (req, res = response) => {
-    const { email } = req.body;
+    const { email, password } = req.body;
 
     try {
         //Buscar en la BD si el correo existe
@@ -15,8 +16,17 @@ const crearUsuario = async (req, res = response) => {
                 msg: 'El Email ya esta registrado'
             });
         }
+
         //Crear una instancia del modelo
         const usuario = new Usuario(req.body);
+
+        //Encriptar
+        //Generamos un salt
+        const salt = bcrypt.genSaltSync();
+        //Encriptar
+        usuario.password = bcrypt.hashSync(password, salt);
+
+
         //Guardamos en la base de datos
         await usuario.save();
 
@@ -31,8 +41,6 @@ const crearUsuario = async (req, res = response) => {
             msg: "Error en el servidor"
         });
     }
-
-
 }
 
 module.exports = {
