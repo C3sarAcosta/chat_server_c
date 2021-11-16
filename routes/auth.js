@@ -3,7 +3,7 @@ Path: api/login
 */
 
 const { Router, response } = require('express');
-const { crearUsuario } = require('../controllers/auth')
+const { crearUsuario, Login, login } = require('../controllers/auth')
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 
@@ -17,5 +17,12 @@ router.post('/new', [
     check('email', 'El email es obligatorio').isEmail(),
     validarCampos
 ], crearUsuario)
+
+
+//En point Login
+router.post('/', [
+    check('password', 'El password es obligatorio').not().isEmpty(),
+    check('email', 'El email es obligatorio').isEmail(),
+], login)
 
 module.exports = router

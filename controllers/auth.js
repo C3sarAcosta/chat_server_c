@@ -48,6 +48,45 @@ const crearUsuario = async (req, res = response) => {
     }
 }
 
+const login = async (req, res = response) => {
+    const { email, password } = req.body;
+    try {
+        //Validar email
+        const usuario = await Usuario.findOne({ email });
+
+        if (!usuario) {
+            return res.status(404).json({
+                ok: false,
+                msg: "email no encontrado"
+            });
+        }
+
+        //Validar password
+        const validarPassword = bcrypt.compareSync(password, usuario.password);
+        if (!validarPassword) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Password incorrecto'
+            });
+        }
+
+        //Generamos JWT
+        const token = await generarJWT(usuario.id);
+
+        res.json({
+            ok: true,
+            usuario,
+            token
+        });
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error'
+        })
+    }
+}
+
 module.exports = {
-    crearUsuario
+    crearUsuario,
+    login
 }
