@@ -2,6 +2,7 @@ const { response } = require("express");
 const { validationResult } = require("express-validator");
 const Usuario = require("../models/usuario");
 const bcrypt = require("bcryptjs");
+const { generarJWT } = require("../helpers/jwt");
 
 const crearUsuario = async (req, res = response) => {
     const { email, password } = req.body;
@@ -30,9 +31,13 @@ const crearUsuario = async (req, res = response) => {
         //Guardamos en la base de datos
         await usuario.save();
 
+        //Generar token
+        const token = await generarJWT(usuario.id);
+
         res.json({
             ok: true,
-            usuario
+            usuario,
+            token
         });
     } catch (error) {
         console.log(error);
