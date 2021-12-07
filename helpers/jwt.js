@@ -10,7 +10,7 @@ const generarJWT = (uid) => {
         //Firmar el jwt
         jwt.sign(payload, process.env.JWT_KEY, {
             //Tiempo de expiracion
-            expiresIn: '12h'
+            expiresIn: '10h'
         }, (err, token) => {
             if (err) {
                 reject('No se genero el JWT')
@@ -22,6 +22,17 @@ const generarJWT = (uid) => {
     });
 }
 
+const comprobarJWT = (token = '') => {
+    try {
+        const { uid } = jwt.verify(token, process.env.JWT_KEY);
+        return [true, uid];
+    } catch (error) {
+        return [false, null]
+    }
+}
+
+
 module.exports = {
-    generarJWT
+    generarJWT,
+    comprobarJWT
 }
